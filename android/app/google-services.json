@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "830436214415",
+    "project_id": "islamic-chat-app-38906",
+    "storage_bucket": "islamic-chat-app-38906.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:830436214415:android:07f44abd68bc3ec2e852fa",
+        "android_client_info": {
+          "package_name": "com.example.fyp_admin_panel"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCW8mGnOnJt7FxvvhhsM7z0_MzNfCLL_6Q"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:830436214415:android:8a993bdc4b9c25f2e852fa",
+        "android_client_info": {
+          "package_name": "com.example.fyp_user_panel"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCW8mGnOnJt7FxvvhhsM7z0_MzNfCLL_6Q"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
