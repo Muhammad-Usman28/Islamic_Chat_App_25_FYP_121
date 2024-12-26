@@ -12,14 +12,14 @@ class ButtonForAuth extends StatefulWidget {
   final Color? shadowColor;
   const ButtonForAuth(
       {super.key,
-      required this.height,
-      required this.width,
-      required this.border_color,
-      required this.background_color,
-      required this.text,
-      required this.text_color,
-      required this.my_fun,
-      required this.shadowColor});
+      this.height,
+      this.width,
+      this.border_color,
+      this.background_color,
+      this.text,
+      this.text_color,
+      this.my_fun,
+      this.shadowColor});
 
   @override
   State<ButtonForAuth> createState() => _ButtonForAuthState();

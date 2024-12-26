@@ -118,13 +118,14 @@ class _FindFriendScreenState extends State<FindFriendScreen> {
                           itemCount: searchFriends!.length,
                           itemBuilder: (context, index) {
                             var data = searchFriends![index];
-                          
+
                             return FindFriendTile(
                               image_url: "${data["Avatar_Url"]}",
                               first_name: "${data["First_Name"]}",
                               last_name: "${data["Last_Name"]}",
                               email: "${data["Email"]}",
                               button_widget: ButtonForAuth(
+                                shadowColor: Color(0xff1F41BB),
                                 height: 0.04,
                                 width: 0.5,
                                 border_color: Color(0xff1F41BB),
@@ -132,29 +133,49 @@ class _FindFriendScreenState extends State<FindFriendScreen> {
                                 text: "Send Request",
                                 text_color: Colors.white,
                                 my_fun: () async {
-                                  myPersonInfo();
-                                  String? toUserID = "${data["Email"]}";
-                                  String? fromUserID =
-                                      "${myPersonalData["Email"]}";
-                                  String? customID = "${fromUserID}_$toUserID";
-                                  await FirebaseFirestore.instance
-                                      .collection("Friend_Requests")
-                                      .doc("$customID")
-                                      .set({
-                                    "ToUserEmail": "$toUserID",
-                                    "FromUserImage":
-                                        "${myPersonalData["Avatar_Url"]}",
-                                    "FromUserFirstName":
-                                        "${myPersonalData["First_Name"]}",
-                                    "FromUserLastName":
-                                        "${myPersonalData["Last_Name"]}",
-                                    "FromUserEmail":
-                                        "${myPersonalData["Email"]}",
-                                    "Status": "Pending",
-                                    "TimeStamp": FieldValue.serverTimestamp()
-                                  });
+                                  myPersonInfo().then(
+                                    (_) async {
+                                      String? toUserID =
+                                          "${data["Email"]}".toLowerCase();
+                                      String? fromUserID =
+                                          "${myPersonalData["Email"]}"
+                                              .toLowerCase();
+                                      String? customID =
+                                          "${fromUserID}_$toUserID";
+                                      await FirebaseFirestore.instance
+                                          .collection("Friend_Requests")
+                                          .doc("$customID")
+                                          .set({
+                                        "ToUserEmail": "$toUserID",
+                                        "FromUserImage":
+                                            "${myPersonalData["Avatar_Url"]}",
+                                        "FromUserFirstName":
+                                            "${myPersonalData["First_Name"]}",
+                                        "FromUserLastName":
+                                            "${myPersonalData["Last_Name"]}",
+                                        "FromUserEmail":
+                                            "${myPersonalData["Email"]}"
+                                                .toLowerCase(),
+                                        "Status": "Pending",
+                                        "TimeStamp":
+                                            FieldValue.serverTimestamp()
+                                      });
+
+                                      ScaffoldMessenger.of(context)
+                                          .showSnackBar(SnackBar(
+                                              backgroundColor: Colors.green,
+                                              content:
+                                                  Text("Request is sent.")));
+                                    },
+                                  ).catchError((error) {
+                                    print("Error: $error");
+                                  }).whenComplete(
+                                    () {
+                                      print(
+                                          "Operation complete, whether successful or not");
+                                    },
+                                  );
                                 },
-                                shadowColor: Color(0xff1F41BB),
                               ),
                             );
                           },

@@ -31,7 +31,7 @@ class _SignupState extends State<Signup> {
     if (url == null) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          backgroundColor: Color(0xff1F41BB),
+          backgroundColor: Colors.red,
           content: Text(
             "Please Select Your Avatar",
             style: GoogleFonts.poppins(
@@ -45,7 +45,7 @@ class _SignupState extends State<Signup> {
     if (passwordController.text.length != 8) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          backgroundColor: Color(0xff1F41BB),
+          backgroundColor: Colors.red,
           content: Text(
             "Password Must Consist of 8 Characaters",
             style: GoogleFonts.poppins(
@@ -59,7 +59,8 @@ class _SignupState extends State<Signup> {
     if (firstNameController.text.isNotEmpty &&
         lastNameController.text.isNotEmpty &&
         emailController.text.isNotEmpty &&
-        passwordController.text.isNotEmpty) {
+        passwordController.text.isNotEmpty &&
+        url != null) {
       try {
         await FirebaseAuth.instance.createUserWithEmailAndPassword(
           email: emailController.text,
@@ -70,7 +71,7 @@ class _SignupState extends State<Signup> {
             .collection("AllUsers")
             .doc(emailController.text)
             .set({
-          "Email": emailController.text,
+          "Email": emailController.text.toLowerCase(),
           "First_Name": firstNameController.text,
           "Last_Name": lastNameController.text,
           "Avatar_Url": url,
@@ -81,6 +82,19 @@ class _SignupState extends State<Signup> {
         emailController.clear();
         passwordController.clear();
 
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            backgroundColor: Colors.green,
+            content: Text(
+              "Sign UP Successfully",
+              style: GoogleFonts.poppins(
+                fontSize: 15,
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+          ),
+        );
+
         Navigator.push(
           context,
           MaterialPageRoute(
@@ -88,16 +102,12 @@ class _SignupState extends State<Signup> {
           ),
         );
       } catch (e) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text("${e}"),
-          ),
-        );
+        return print(e);
       }
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          backgroundColor: Color(0xff1F41BB),
+          backgroundColor: Colors.red,
           content: Text(
             "Please Fill out all Fields",
             style: GoogleFonts.poppins(

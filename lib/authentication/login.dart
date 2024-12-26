@@ -27,6 +27,18 @@ class _LoginState extends State<Login> {
             email: emailController.text, password: passwordController.text);
         emailController.clear();
         passwordController.clear();
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            backgroundColor: Colors.green,
+            content: Text(
+              "Sign in Successfully",
+              style: GoogleFonts.poppins(
+                fontSize: 15,
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+          ),
+        );
         Navigator.push(
           context,
           MaterialPageRoute(
@@ -34,11 +46,7 @@ class _LoginState extends State<Login> {
           ),
         );
       } catch (e) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text("${e}"),
-          ),
-        );
+        print(e);
       }
     } else {
       ScaffoldMessenger.of(context).showSnackBar(

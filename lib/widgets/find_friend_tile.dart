@@ -7,6 +7,7 @@ class FindFriendTile extends StatefulWidget {
   final String? last_name;
   final String? email;
   final Widget? button_widget;
+  final Widget? delete_button;
 
   const FindFriendTile({
     super.key,
@@ -15,6 +16,7 @@ class FindFriendTile extends StatefulWidget {
     this.last_name,
     this.email,
     this.button_widget,
+    this.delete_button,
   });
 
   @override
@@ -77,6 +79,15 @@ class _FindFriendTileState extends State<FindFriendTile> {
                     Padding(
                       padding: const EdgeInsets.only(top: 8.0),
                       child: widget.button_widget!,
+                    ),
+                  SizedBox(
+                    width: width * 0.02,
+                  ),
+                  if (widget.delete_button !=
+                      null) // Check if button_widget exists
+                    Padding(
+                      padding: const EdgeInsets.only(top: 8.0),
+                      child: widget.delete_button!,
                     ),
                 ],
               ),

@@ -8,18 +8,24 @@ class CustomFieldsForAuth extends StatefulWidget {
   final bool? isHidden;
   final Color? shadowColor;
   final Icon? icon;
+  final bool? isRead;
   final ValueChanged<String>? onChanged;
+  final String? Function(String?)? validator;
+  final VoidCallback? my_fun;
 
   const CustomFieldsForAuth({
     super.key,
-    required this.label_txt,
-    required this.controller,
-    required this.isHidden,
-    required this.height,
-    required this.width,
-    required this.shadowColor,
+    this.label_txt,
+    this.controller,
+    this.isHidden,
+    this.height,
+    this.width,
+    this.shadowColor,
     this.onChanged,
     this.icon,
+    this.validator,
+    this.isRead,
+    this.my_fun,
   });
 
   @override
@@ -49,6 +55,8 @@ class _CustomFieldsForAuthState extends State<CustomFieldsForAuth> {
       height: scaledHeight,
       width: scaledWidth,
       child: TextField(
+        readOnly: widget.isRead ?? false,
+        onTap: widget.my_fun ?? () {},
         cursorColor: Color(0xff1F41BB),
         controller: widget.controller,
         obscureText: widget.isHidden!,
