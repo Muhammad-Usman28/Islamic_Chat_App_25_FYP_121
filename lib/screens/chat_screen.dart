@@ -1,21 +1,27 @@
+import 'dart:convert';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:fyp_user_panel/screens/main_screen.dart';
-import 'package:google_fonts/google_fonts.dart';
+import 'package:fyp_user_panel/widgets/chat_header.dart';
 import 'package:intl/intl.dart';
+import 'package:http/http.dart' as http;
 
 class ChatScreen extends StatefulWidget {
   final String? senderID;
   final String? receiverID;
   final String? receiverName;
   final String? receiverImage;
+  final String? senderName;
+  final String? senderImage;
+
   const ChatScreen(
       {super.key,
       this.senderID,
       this.receiverID,
       this.receiverName,
-      this.receiverImage});
+      this.receiverImage,
+      this.senderName,
+      this.senderImage});
 
   @override
   State<ChatScreen> createState() => _ChatScreenState();
@@ -24,6 +30,18 @@ class ChatScreen extends StatefulWidget {
 class _ChatScreenState extends State<ChatScreen> {
   TextEditingController messageController = TextEditingController();
   String? chatID;
+
+  final ScrollController _scrollController =
+      ScrollController(); // Scroll controller
+
+  // Scroll to the last message
+  void scrollToLastMessage() {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (_scrollController.hasClients) {
+        _scrollController.jumpTo(_scrollController.position.maxScrollExtent);
+      }
+    });
+  }
 
   // Read message method
 
@@ -67,13 +85,21 @@ class _ChatScreenState extends State<ChatScreen> {
           'sender': senderEmail,
           'text': message,
           'timestamp': timestamp,
-          'read': false
+          'read': false,
+          "receiverImage": widget.receiverImage,
+          'receiverName': widget.receiverName,
+          'senderName': widget.senderName,
+          "senderImage": widget.senderImage,
         }
       ]),
       'lastMessage': message,
       'lastMessageSender': senderEmail,
       'lastMessageTimestamp': timestamp,
       'recentActiveTime': timestamp,
+      "receiverImage": widget.receiverImage,
+      'receiverName': widget.receiverName,
+      'senderName': widget.senderName,
+      "senderImage": widget.senderImage,
     }, SetOptions(merge: true));
     messageController.clear();
   }
@@ -91,6 +117,7 @@ class _ChatScreenState extends State<ChatScreen> {
       chatID = generateChatID(widget.senderID!, widget.receiverID!);
     });
     markMessagesAsSeen();
+    ScrollController();
   }
 
   @override
@@ -104,47 +131,9 @@ class _ChatScreenState extends State<ChatScreen> {
           children: [
             Padding(
               padding: const EdgeInsets.all(8.0),
-              child: Container(
-                height: height * 0.08,
-                width: width * 1,
-                decoration: BoxDecoration(
-                  color: Color(0xffF7F7FC),
-                  border: Border.all(
-                    color: Color(0xFFADB5BD),
-                  ),
-                  borderRadius: BorderRadius.circular(15),
-                ),
-                child: Row(
-                  children: [
-                    IconButton(
-                      onPressed: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => MainScreen(),
-                          ),
-                        );
-                      },
-                      icon: Icon(Icons.chevron_left),
-                    ),
-                    CircleAvatar(
-                      radius: 25,
-                      backgroundImage: NetworkImage("${widget.receiverImage}"),
-                    ),
-                    SizedBox(
-                      width: width * 0.05,
-                    ),
-                    Text(
-                      "${widget.receiverName}",
-                      style: GoogleFonts.poppins(
-                        color: Colors.black,
-                        fontSize: 18,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    )
-                  ],
-                ),
-              ),
+              child: ChatHeader(
+                  receiverImage: "${widget.receiverImage}",
+                  receiverName: "${widget.receiverName}"),
             ),
             Expanded(
               child: StreamBuilder(
@@ -164,8 +153,12 @@ class _ChatScreenState extends State<ChatScreen> {
                   }
                   var chatData = snapshot.data!;
                   List<dynamic> messages = chatData['messages'] ?? [];
+                  WidgetsBinding.instance.addPostFrameCallback((_) {
+                    scrollToLastMessage();
+                  });
 
                   return ListView.builder(
+                    controller: _scrollController,
                     itemCount: messages.length,
                     itemBuilder: (context, index) {
                       var message = messages[index];
@@ -253,8 +246,36 @@ class _ChatScreenState extends State<ChatScreen> {
               padding: const EdgeInsets.all(8.0),
               child: Row(
                 children: [
+                  Padding(
+                    padding: const EdgeInsets.all(5.0),
+                    child: Container(
+                      height: height * 0.04,
+                      width: width * 0.09,
+                      decoration: BoxDecoration(
+                        color: Color(0xffF7F7FC),
+                        borderRadius: BorderRadius.all(
+                          Radius.circular(30),
+                        ),
+                      ),
+                      child: Center(
+                        child: IconButton(
+                          padding: EdgeInsets.zero,
+                          onPressed: () {
+                            _showAlertDialog(context,
+                                SID: widget.senderID,
+                                roomID: chatID,
+                                RID: widget.receiverID);
+                          },
+                          icon: Icon(Icons.add),
+                          splashColor: Colors.transparent,
+                          highlightColor: Colors.transparent,
+                        ),
+                      ),
+                    ),
+                  ),
                   Expanded(
                     child: TextField(
+                      cursorColor: Color(0xFFADB5BD),
                       controller: messageController,
                       decoration: InputDecoration(
                           hintText: 'Enter your message',
@@ -275,6 +296,8 @@ class _ChatScreenState extends State<ChatScreen> {
                     ),
                   ),
                   IconButton(
+                    splashColor: Colors.transparent,
+                    highlightColor: Colors.transparent,
                     icon: Icon(
                       Icons.send,
                       color: Color(0xff1F41BB),
@@ -290,6 +313,102 @@ class _ChatScreenState extends State<ChatScreen> {
           ],
         ),
       ),
+    );
+  }
+
+  void _showAlertDialog(BuildContext context, {var SID, var RID, var roomID}) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Search Hadees'),
+          actions: <Widget>[
+            TextField(
+              onSubmitted: (value) async {
+                final url =
+                    Uri.parse('http://192.168.18.61:8000/get_similar_hadees');
+                final data = {'query': value};
+
+                try {
+                  final response = await http.post(
+                    url,
+                    headers: {
+                      'Content-Type': 'application/json',
+                    },
+                    body: jsonEncode(data),
+                  );
+
+                  if (response.statusCode == 200) {
+                    print(response);
+                    final responseData =
+                        jsonDecode(response.body)['similar_hadees'];
+                    _displayResponseData(context, responseData,
+                        SID: SID, RID: RID, roomID: roomID);
+
+                    // Print the response to the console
+                  } else {
+                    print(
+                        'Error: ${response.reasonPhrase}'); // Print error message
+                  }
+                } catch (e) {
+                  print('Error: $e'); // Print error message
+                }
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  void _displayResponseData(BuildContext context, List responseData,
+      {var SID, var RID, var roomID}) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Similar Hadiths'),
+          content: SizedBox(
+            height: 300,
+            width: 300,
+            child: ListView.builder(
+              itemCount: responseData.length,
+              itemBuilder: (BuildContext context, int index) {
+                final hadith = responseData[index];
+                return ListTile(
+                  title: Text(
+                    'Hadith No: ${hadith['hadith_no']}',
+                    style: TextStyle(fontWeight: FontWeight.bold),
+                  ),
+                  subtitle: Text(
+                    'Source: ${hadith['source']}\n${hadith['text_en']}',
+                    maxLines: 10,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                  onTap: () async {
+                    messageController.text =
+                        "${hadith['source']} ${hadith['hadith_no']}${hadith['text_en']}";
+
+                    sendMessage(widget.senderID, widget.receiverID).then((_) {
+                      messageController.clear();
+                    });
+
+                    Navigator.of(context).pop();
+                  },
+                );
+              },
+            ),
+          ),
+          actions: <Widget>[
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: Text('OK'),
+            ),
+          ],
+        );
+      },
     );
   }
 }

@@ -1,14 +1,15 @@
 import 'package:flutter/material.dart';
-import 'package:fyp_user_panel/screens/update_info_screen.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class PersonalProfileTile extends StatefulWidget {
   final String? text;
   final Icon? icon;
+  final Widget? targetScreen;
   const PersonalProfileTile({
     super.key,
     this.text,
     this.icon,
+    this.targetScreen,
   });
 
   @override
@@ -38,14 +39,18 @@ class _PersonalProfileTileState extends State<PersonalProfileTile> {
           ),
           InkWell(
             onTap: () {
-              Navigator.push(context,
-                  MaterialPageRoute(builder: (context) => UpdateInfoScreen()));
+              if (widget.targetScreen != null) {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => widget.targetScreen!),
+                );
+              }
             },
             child: Text(
               "${widget.text}",
               style: GoogleFonts.roboto(
                   color: Colors.black,
-                  fontSize: 14,
+                  fontSize: 16,
                   fontWeight: FontWeight.bold),
             ),
           )

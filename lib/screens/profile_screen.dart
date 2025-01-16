@@ -1,6 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:fyp_user_panel/screens/dua_screen.dart';
+import 'package:fyp_user_panel/screens/tasbeeh_screen.dart';
 import 'package:fyp_user_panel/widgets/personal_profile_tile.dart';
 import 'package:google_fonts/google_fonts.dart';
 
@@ -108,8 +110,23 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     height: height * 0.04,
                   ),
                   PersonalProfileTile(
-                    icon: Icon(Icons.update),
-                    text: "Update Information",
+                    targetScreen: DuaScreen(),
+                    icon: Icon(
+                      Icons.nightlight_round,
+                      color: Color(0xffFFC107),
+                    ),
+                    text: "Dua Vault",
+                  ),
+                  SizedBox(
+                    height: height * 0.04,
+                  ),
+                  PersonalProfileTile(
+                    targetScreen: TasbeehScreen(),
+                    icon: Icon(
+                      Icons.all_inclusive,
+                      color: Color(0xffFFC107),
+                    ),
+                    text: "Dhikr Counter",
                   )
                 ],
               ),

@@ -55,7 +55,6 @@ class _MainScreenState extends State<MainScreen> {
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     myPersonInfo().then((_) async {
       print("Data is Fetched");
