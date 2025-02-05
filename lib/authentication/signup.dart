@@ -72,8 +72,8 @@ class _SignupState extends State<Signup> {
             .doc(emailController.text)
             .set({
           "Email": emailController.text.toLowerCase(),
-          "First_Name": firstNameController.text,
-          "Last_Name": lastNameController.text,
+          "First_Name": firstNameController.text.toLowerCase(),
+          "Last_Name": lastNameController.text.toLowerCase(),
           "Avatar_Url": url,
         });
 

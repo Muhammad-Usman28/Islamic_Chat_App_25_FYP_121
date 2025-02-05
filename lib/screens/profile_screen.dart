@@ -5,6 +5,7 @@ import 'package:fyp_user_panel/screens/dua_screen.dart';
 import 'package:fyp_user_panel/screens/tasbeeh_screen.dart';
 import 'package:fyp_user_panel/widgets/personal_profile_tile.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
@@ -52,6 +53,23 @@ class _ProfileScreenState extends State<ProfileScreen> {
     }
   }
 
+  // Invite Friend Method
+
+  Future<void> openWhatsApp({required String message}) async {
+    final whatsappUrl =
+        Uri.parse('https://wa.me/?text=${Uri.encodeComponent(message)}');
+
+    if (await canLaunchUrl(whatsappUrl)) {
+      try {
+        await launchUrl(whatsappUrl, mode: LaunchMode.externalApplication);
+      } catch (e) {
+        print('Error launching WhatsApp: $e');
+      }
+    } else {
+      print('Could not launch WhatsApp');
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     double? height = MediaQuery.of(context).size.height;
@@ -66,7 +84,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
             : Column(
                 children: [
                   SizedBox(
-                    height: height * 0.02,
+                    height: height * 0.05,
                   ),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
@@ -75,14 +93,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         "Personal Profile",
                         style: GoogleFonts.mulish(
                           color: Colors.black,
-                          fontSize: 20,
+                          fontSize: 22,
                           fontWeight: FontWeight.bold,
                         ),
                       ),
                     ],
                   ),
                   SizedBox(
-                    height: height * 0.02,
+                    height: height * 0.04,
                   ),
                   CircleAvatar(
                     radius: 40,
@@ -93,7 +111,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             as ImageProvider,
                   ),
                   SizedBox(
-                    height: height * 0.02,
+                    height: height * 0.04,
                   ),
                   Text(
                     myPersonalData["First_Name"] != null &&
@@ -103,7 +121,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         : "Loading...",
                     style: GoogleFonts.mulish(
                         color: Colors.black,
-                        fontSize: 15,
+                        fontSize: 16,
                         fontWeight: FontWeight.bold),
                   ),
                   SizedBox(
@@ -127,7 +145,23 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       color: Color(0xffFFC107),
                     ),
                     text: "Dhikr Counter",
-                  )
+                  ),
+                  SizedBox(
+                    height: height * 0.04,
+                  ),
+                  PersonalProfileTile(
+                    targetScreen: null,
+                    icon: Icon(
+                      Icons.link,
+                      color: Color(0xffFFC107),
+                    ),
+                    text: "Invite Friend",
+                    onTap: () {
+                      openWhatsApp(
+                          message:
+                              "Check out this amazing app: [Your App Link]");
+                    },
+                  ),
                 ],
               ),
       ),

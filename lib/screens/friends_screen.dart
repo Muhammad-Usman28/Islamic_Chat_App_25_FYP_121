@@ -88,15 +88,15 @@ class _FriendsScreenState extends State<FriendsScreen> {
                                   .doc("${doc[index].id}")
                                   .update({"Status": "Accepted"});
                               final fromUserEmail = data["FromUserEmail"];
-                              final fromUserFirstName =
+                              String fromUserFirstName =
                                   data["FromUserFirstName"];
-                              final fromUserLastImage =
+                              String fromUserLastName =
                                   data["FromUserLastName"];
                               final fromUserImage = data["FromUserImage"];
 
                               final toUserEmail = myData["Email"];
-                              final toUserFirstName = myData["First_Name"];
-                              final toUserLastName = myData["Last_Name"];
+                              String toUserFirstName = myData["First_Name"];
+                              String toUserLastName = myData["Last_Name"];
                               final toUserImage = myData["Avatar_Url"];
 
                               await FirebaseFirestore.instance
@@ -105,9 +105,10 @@ class _FriendsScreenState extends State<FriendsScreen> {
                                   .collection("friends")
                                   .doc(fromUserEmail)
                                   .set({
-                                "FirstName": fromUserFirstName,
-                                "LastName": fromUserLastImage,
+                                "FirstName": fromUserFirstName.toLowerCase(),
+                                "LastName": fromUserLastName.toLowerCase(),
                                 "Image": fromUserImage,
+                                "Email": fromUserEmail,
                                 "timestamp": FieldValue.serverTimestamp(),
                               });
 
@@ -117,8 +118,9 @@ class _FriendsScreenState extends State<FriendsScreen> {
                                   .collection("friends")
                                   .doc(toUserEmail)
                                   .set({
-                                "FirstName": toUserFirstName,
-                                "LastName": toUserLastName,
+                                "FirstName": toUserFirstName.toLowerCase(),
+                                "LastName": toUserLastName.toLowerCase(),
+                                "Email": toUserEmail,
                                 "Image": toUserImage,
                                 "timestamp": FieldValue.serverTimestamp(),
                               });

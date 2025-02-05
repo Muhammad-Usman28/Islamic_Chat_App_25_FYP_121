@@ -68,6 +68,7 @@ class _MainScreenState extends State<MainScreen> {
     return SafeArea(
       child: Scaffold(
         drawer: Drawer(
+          backgroundColor: Colors.white,
           child: Column(
             children: [
               DrawerHeader(
@@ -105,7 +106,7 @@ class _MainScreenState extends State<MainScreen> {
           backgroundColor: Color(0xFFFFFFFF),
           centerTitle: true,
           title: Text(
-            "Chat App",
+            "Islamic Chat App",
             style: GoogleFonts.roboto(
               fontSize: 22,
               color: Colors.black,

@@ -146,7 +146,8 @@ class _HomeScreenState extends State<HomeScreen> {
                                                       ),
                                                       SizedBox(height: 10),
                                                       Text(
-                                                        "${doc["FirstName"]} ${doc["LastName"]}",
+                                                        "${doc["FirstName"][0].toUpperCase()}${doc["FirstName"].substring(1).toLowerCase()} "
+                                                        "${doc["LastName"][0].toUpperCase()}${doc["LastName"].substring(1).toLowerCase()}",
                                                         style:
                                                             GoogleFonts.poppins(
                                                           color: Colors.white,
@@ -339,7 +340,8 @@ class _HomeScreenState extends State<HomeScreen> {
                                     Row(
                                       children: [
                                         Text(
-                                          "${doc["FirstName"]} ${doc["LastName"]}",
+                                          "${doc["FirstName"][0].toUpperCase()}${doc["FirstName"].substring(1).toLowerCase()} "
+                                          "${doc["LastName"][0].toUpperCase()}${doc["LastName"].substring(1).toLowerCase()}",
                                           style: GoogleFonts.roboto(
                                               color: Colors.black,
                                               fontSize: 11,
@@ -393,7 +395,8 @@ class _HomeScreenState extends State<HomeScreen> {
                               chatDocs[index].data() as Map<String, dynamic>;
                           final chatID = chatDocs[index].id;
                           final lastMessage = chat['lastMessage'] ?? '';
-                          final lastSender = chat['lastMessageSender'] ?? '';
+                          // final lastSender = chat['lastMessageSender'] ?? '';
+
                           final timestamp =
                               chat['lastMessageTimestamp'] as Timestamp?;
 
@@ -401,21 +404,30 @@ class _HomeScreenState extends State<HomeScreen> {
                           final chatPartnerEmail = chatID
                               .replaceAll('${loggedInUserEmail}_', '')
                               .replaceAll('_${loggedInUserEmail}', '');
-
+                          // getSenderInfo(chatPartnerEmail);
+                          final record = ((chatPartnerEmail ==
+                                  chat["${chatPartnerEmail}"]["Email"])
+                              ? chat["${chatPartnerEmail}"]
+                              : ((chatPartnerEmail ==
+                                      chat["${FirebaseAuth.instance.currentUser!.email}"]
+                                          ["Email"])
+                                  ? chat[
+                                      "${FirebaseAuth.instance.currentUser!.email}"]
+                                  : {}));
+                          print(
+                              "${chat["${FirebaseAuth.instance.currentUser!.email}"]}");
                           return ListTile(
                             leading: CircleAvatar(
-                              backgroundImage:
-                                  NetworkImage("${chat["receiverImage"]}"),
-                            ),
-                            title: Container(
-                              child: Text(
-                                overflow: TextOverflow.ellipsis,
-                                "${chat["receiverName"]}",
-                                style: GoogleFonts.poppins(
-                                  color: Colors.black,
-                                  fontSize: 15,
-                                  fontWeight: FontWeight.w600,
-                                ),
+                                backgroundColor: Colors.grey[300],
+                                child:
+                                    Image.network("${record["Avatar_Url"]}")),
+                            title: Text(
+                              "${record["First_Name"][0].toUpperCase()}${record["First_Name"].substring(1).toLowerCase()} "
+                              "${record["Last_Name"][0].toUpperCase()}${record["Last_Name"].substring(1).toLowerCase()}",
+                              style: GoogleFonts.poppins(
+                                color: Colors.black,
+                                fontSize: 14,
+                                fontWeight: FontWeight.w700,
                               ),
                             ),
                             subtitle: Text(
@@ -426,30 +438,24 @@ class _HomeScreenState extends State<HomeScreen> {
                             ),
                             trailing: timestamp != null
                                 ? Column(
+                                    mainAxisAlignment: MainAxisAlignment.center,
                                     crossAxisAlignment: CrossAxisAlignment.end,
                                     children: [
-                                      SizedBox(
-                                        height: height * 0.02,
-                                      ),
                                       Text(
-                                        DateFormat('hh:mm a').format(
-                                            timestamp.toDate()), // Only time
-                                        style: GoogleFonts.poppins(
-                                          color: Colors.grey,
-                                          fontSize: 10,
-                                          fontWeight: FontWeight.w500,
-                                        ),
+                                        // Format time
+                                        DateFormat('hh:mm a')
+                                            .format(timestamp.toDate()),
+                                        style: const TextStyle(
+                                            color: Colors.grey, fontSize: 10),
                                       ),
-                                      // Show date and month at the bottom
+                                      const SizedBox(
+                                          height: 4), // Add some spacing
                                       Text(
-                                        DateFormat('MMM dd, yyyy').format(
-                                            timestamp
-                                                .toDate()), // Date and month
-                                        style: GoogleFonts.poppins(
-                                          color: Colors.grey,
-                                          fontSize: 10,
-                                          fontWeight: FontWeight.w500,
-                                        ),
+                                        // Format date
+                                        DateFormat('dd/MM/yyyy')
+                                            .format(timestamp.toDate()),
+                                        style: const TextStyle(
+                                            color: Colors.grey, fontSize: 10),
                                       ),
                                     ],
                                   )
@@ -462,10 +468,9 @@ class _HomeScreenState extends State<HomeScreen> {
                                   builder: (context) => ChatScreen(
                                     senderID: "${loggedInUserEmail}",
                                     receiverID: "${chatPartnerEmail}",
-                                    receiverName: "${chat["receiverName"]}",
-                                    receiverImage: "${chat["receiverImage"]}",
-                                    senderImage: "${chat["senderImage"]}",
-                                    senderName: "${chat["senderName"]}",
+                                    receiverImage: "${record["Avatar_Url"]}",
+                                    receiverName:
+                                        "${record["First_Name"]} ${record["Last_Name"]}",
                                   ),
                                 ),
                               );

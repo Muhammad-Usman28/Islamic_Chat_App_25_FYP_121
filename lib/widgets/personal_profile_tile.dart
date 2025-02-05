@@ -5,11 +5,13 @@ class PersonalProfileTile extends StatefulWidget {
   final String? text;
   final Icon? icon;
   final Widget? targetScreen;
+  final VoidCallback? onTap;
   const PersonalProfileTile({
     super.key,
     this.text,
     this.icon,
     this.targetScreen,
+    this.onTap,
   });
 
   @override
@@ -39,10 +41,14 @@ class _PersonalProfileTileState extends State<PersonalProfileTile> {
           ),
           InkWell(
             onTap: () {
-              if (widget.targetScreen != null) {
+              if (widget.onTap != null) {
+                widget.onTap!();
+              } else if (widget.targetScreen != null) {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => widget.targetScreen!),
+                  MaterialPageRoute(
+                    builder: (context) => widget.targetScreen!,
+                  ),
                 );
               }
             },
