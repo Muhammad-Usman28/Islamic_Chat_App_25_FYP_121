@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:fyp_user_panel/screens/chat_screen.dart';
+import 'package:fyp_user_panel/view/gemini_chat.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 
@@ -67,6 +68,17 @@ class _HomeScreenState extends State<HomeScreen> {
     return SafeArea(
       child: Scaffold(
         backgroundColor: Colors.white,
+        floatingActionButton: FloatingActionButton(
+          onPressed: () {
+            Navigator.push(
+                context, MaterialPageRoute(builder: (context) => Geminichat()));
+          },
+          child: Icon(
+            Icons.add,
+            color: Colors.white,
+          ),
+          backgroundColor: Color(0xFF37474F),
+        ),
         body: Padding(
           padding: const EdgeInsets.all(10),
           child: SingleChildScrollView(
@@ -470,7 +482,8 @@ class _HomeScreenState extends State<HomeScreen> {
                                     receiverID: "${chatPartnerEmail}",
                                     receiverImage: "${record["Avatar_Url"]}",
                                     receiverName:
-                                        "${record["First_Name"]} ${record["Last_Name"]}",
+                                        "${record["First_Name"][0].toUpperCase()}${record["First_Name"].substring(1).toLowerCase()} "
+                                        "${record["Last_Name"][0].toUpperCase()}${record["Last_Name"].substring(1).toLowerCase()}",
                                   ),
                                 ),
                               );

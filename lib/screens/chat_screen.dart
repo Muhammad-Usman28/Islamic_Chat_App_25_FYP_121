@@ -33,14 +33,29 @@ class ChatScreen extends StatefulWidget {
 
 class _ChatScreenState extends State<ChatScreen> {
   TextEditingController messageController = TextEditingController();
+  final ScrollController _scrollController = ScrollController();
   String? chatID;
 
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) => _scrollToBottom());
 
     setState(() {
       chatID = generateChatID(widget.senderID!, widget.receiverID!);
+    });
+  }
+
+  // Scroll bottom
+  void _scrollToBottom() {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (_scrollController.hasClients) {
+        _scrollController.animateTo(
+          _scrollController.position.maxScrollExtent,
+          duration: Duration(milliseconds: 300), // Smooth scrolling
+          curve: Curves.easeOut,
+        );
+      }
     });
   }
 
@@ -198,8 +213,11 @@ class _ChatScreenState extends State<ChatScreen> {
                   }
                   var chatData = snapshot.data!;
                   List<dynamic> messages = chatData['messages'] ?? [];
+                  WidgetsBinding.instance
+                      .addPostFrameCallback((_) => _scrollToBottom());
 
                   return ListView.builder(
+                    controller: _scrollController,
                     itemCount: messages.length,
                     itemBuilder: (context, index) {
                       var message = messages[index];
@@ -227,8 +245,9 @@ class _ChatScreenState extends State<ChatScreen> {
                             padding: const EdgeInsets.symmetric(
                                 vertical: 10.0, horizontal: 16.0),
                             decoration: BoxDecoration(
-                              color:
-                                  isSender ? Colors.blue : Colors.grey.shade300,
+                              color: isSender
+                                  ? Color(0xff2196F3)
+                                  : Colors.grey.shade300,
                               borderRadius: BorderRadius.circular(12),
                             ),
                             child: Column(
@@ -277,10 +296,11 @@ class _ChatScreenState extends State<ChatScreen> {
                   Padding(
                     padding: const EdgeInsets.all(5.0),
                     child: Container(
-                      height: height * 0.04,
-                      width: width * 0.09,
+                      height: height * 0.06,
+                      width: width * 0.12,
                       decoration: BoxDecoration(
                         color: Color(0xffF7F7FC),
+                        border: Border.all(color: Color(0xffADB5BD)),
                         borderRadius: BorderRadius.all(
                           Radius.circular(30),
                         ),
@@ -428,7 +448,7 @@ class _ChatScreenState extends State<ChatScreen> {
                   onPressed: () async {
                     if (searchQuery.isNotEmpty) {
                       final url = Uri.parse(
-                          'http://192.168.18.61:8000/get_similar_hadees');
+                          'http://192.168.230.106:8000/get_similar_hadees');
                       final data = {'query': searchQuery};
 
                       try {

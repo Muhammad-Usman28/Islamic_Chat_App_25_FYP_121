@@ -222,10 +222,15 @@ class _FindFriendScreenState extends State<FindFriendScreen> {
 
                 // Display if no friends are found
                 else if (searchFriends == false || searchFriends.isEmpty)
-                  SizedBox(
-                    height: height * 0.3,
-                    width: 300,
-                    child: Image.asset("assets/images/empty.jpg"),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      SizedBox(
+                        height: height * 0.3,
+                        width: 300,
+                        child: Image.asset("assets/images/empty.jpg"),
+                      ),
+                    ],
                   )
 
                 // Display found friends

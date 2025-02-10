@@ -54,7 +54,7 @@ class _FriendsScreenState extends State<FriendsScreen> {
                   if (snapshot.hasData && snapshot.data!.docs.isNotEmpty) {
                     var doc = snapshot.data!.docs;
                     List<dynamic> requestData = doc.map((e) {
-                      return e.data() as Map<String, dynamic>;
+                      return e.data();
                     }).toList();
                     return ListView.builder(
                       itemCount: requestData.length,

@@ -115,17 +115,83 @@ class _MainScreenState extends State<MainScreen> {
           ),
           actions: [
             IconButton(
+              highlightColor: Colors.transparent,
+              splashColor: Colors.transparent,
               onPressed: () {
-                FirebaseAuth.instance.signOut();
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => Login(),
+                showDialog(
+                  barrierDismissible: false,
+                  context: context,
+                  builder: (context) => Dialog(
+                    backgroundColor: Color(0xffF7F7FC),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(20),
+                    ),
+                    child: Padding(
+                      padding: const EdgeInsets.all(20.0),
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Icon(Icons.warning_amber_rounded,
+                              size: 60, color: Colors.redAccent),
+                          SizedBox(height: height * 0.001),
+                          Text(
+                            "Logout Confirmation",
+                            style: TextStyle(
+                                fontSize: 20,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.black87),
+                          ),
+                          SizedBox(height: 10),
+                          Text(
+                            "Are you sure you want to log out?",
+                            textAlign: TextAlign.center,
+                            style:
+                                TextStyle(fontSize: 16, color: Colors.black54),
+                          ),
+                          SizedBox(height: 20),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              ElevatedButton(
+                                onPressed: () {
+                                  Navigator.pop(context); // Close dialog
+                                },
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: Colors.grey[300],
+                                  padding: EdgeInsets.symmetric(
+                                      horizontal: 20, vertical: 12),
+                                ),
+                                child: Text("Cancel",
+                                    style: TextStyle(color: Colors.black)),
+                              ),
+                              ElevatedButton(
+                                onPressed: () {
+                                  FirebaseAuth.instance.signOut();
+                                  Navigator.pop(context); // Close dialog
+                                  Navigator.pushReplacement(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) => Login()),
+                                  );
+                                },
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: Colors.redAccent,
+                                  padding: EdgeInsets.symmetric(
+                                      horizontal: 20, vertical: 12),
+                                ),
+                                child: Text("Log Out",
+                                    style: TextStyle(color: Colors.white)),
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                    ),
                   ),
                 );
               },
-              icon: Icon(Icons.logout),
-            )
+              icon: Icon(Icons.logout, size: 28),
+            ),
           ],
         ),
         body: Screens![index!],

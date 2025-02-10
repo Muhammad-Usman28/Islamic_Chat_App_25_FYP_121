@@ -15,304 +15,231 @@ class Signup extends StatefulWidget {
 }
 
 class _SignupState extends State<Signup> {
-  // Controller
+  // Controllers
   TextEditingController emailController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
   TextEditingController firstNameController = TextEditingController();
   TextEditingController lastNameController = TextEditingController();
 
-  //  Variables
   String? url;
   int? selectedIndex;
 
-  // Sign Up Function
+  void showMessage(String message, {Color backgroundColor = Colors.red}) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(
+          message,
+          style: GoogleFonts.poppins(
+            fontSize: 15,
+            fontWeight: FontWeight.w500,
+            color: Colors.white,
+          ),
+        ),
+        backgroundColor: backgroundColor,
+        duration: Duration(seconds: 3),
+      ),
+    );
+  }
 
-  Future<void> Sign_Up(BuildContext context) async {
+  Future<void> signUp() async {
+    if (firstNameController.text.isEmpty ||
+        lastNameController.text.isEmpty ||
+        emailController.text.isEmpty ||
+        passwordController.text.isEmpty) {
+      showMessage("Please fill out all fields.");
+      return;
+    }
+
+    if (passwordController.text.length < 8) {
+      showMessage("Password must be at least 8 characters long.");
+      return;
+    }
+
     if (url == null) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          backgroundColor: Colors.red,
-          content: Text(
-            "Please Select Your Avatar",
-            style: GoogleFonts.poppins(
-              fontSize: 15,
-              fontWeight: FontWeight.w500,
-            ),
-          ),
-        ),
-      );
+      showMessage("Please select your avatar.");
+      return;
     }
-    if (passwordController.text.length != 8) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          backgroundColor: Colors.red,
-          content: Text(
-            "Password Must Consist of 8 Characaters",
-            style: GoogleFonts.poppins(
-              fontSize: 15,
-              fontWeight: FontWeight.w500,
-            ),
-          ),
-        ),
+
+    try {
+      await FirebaseAuth.instance.createUserWithEmailAndPassword(
+        email: emailController.text.trim(),
+        password: passwordController.text.trim(),
       );
-    }
-    if (firstNameController.text.isNotEmpty &&
-        lastNameController.text.isNotEmpty &&
-        emailController.text.isNotEmpty &&
-        passwordController.text.isNotEmpty &&
-        url != null) {
-      try {
-        await FirebaseAuth.instance.createUserWithEmailAndPassword(
-          email: emailController.text,
-          password: passwordController.text,
-        );
 
-        await FirebaseFirestore.instance
-            .collection("AllUsers")
-            .doc(emailController.text)
-            .set({
-          "Email": emailController.text.toLowerCase(),
-          "First_Name": firstNameController.text.toLowerCase(),
-          "Last_Name": lastNameController.text.toLowerCase(),
-          "Avatar_Url": url,
-        });
+      await FirebaseFirestore.instance
+          .collection("AllUsers")
+          .doc(emailController.text.trim())
+          .set({
+        "Email": emailController.text.trim().toLowerCase(),
+        "First_Name": firstNameController.text.trim().toLowerCase(),
+        "Last_Name": lastNameController.text.trim().toLowerCase(),
+        "Avatar_Url": url,
+      });
 
-        firstNameController.clear();
-        lastNameController.clear();
-        emailController.clear();
-        passwordController.clear();
+      emailController.clear();
+      passwordController.clear();
+      firstNameController.clear();
+      lastNameController.clear();
 
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            backgroundColor: Colors.green,
-            content: Text(
-              "Sign UP Successfully",
-              style: GoogleFonts.poppins(
-                fontSize: 15,
-                fontWeight: FontWeight.w500,
-              ),
-            ),
-          ),
-        );
+      showMessage("Sign Up Successful!", backgroundColor: Colors.green);
 
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => Login(),
-          ),
-        );
-      } catch (e) {
-        return print(e);
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => Login()),
+      );
+    } on FirebaseAuthException catch (e) {
+      if (e.code == 'email-already-in-use') {
+        showMessage("Email is already in use. Try another one.");
+      } else {
+        showMessage(e.message ?? "An error occurred. Please try again.");
       }
-    } else {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          backgroundColor: Colors.red,
-          content: Text(
-            "Please Fill out all Fields",
-            style: GoogleFonts.poppins(
-              fontSize: 15,
-              fontWeight: FontWeight.w500,
-            ),
-          ),
-        ),
-      );
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    double? height = MediaQuery.of(context).size.height;
-    double? width = MediaQuery.of(context).size.width;
+    double height = MediaQuery.of(context).size.height;
+    double width = MediaQuery.of(context).size.width;
+
     return SafeArea(
       child: Scaffold(
         backgroundColor: Colors.white,
-        body: Container(
-          child: SingleChildScrollView(
-            child: Column(
-              children: [
-                SizedBox(
-                  height: height * 0.05,
-                ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Text(
-                      "Create Account",
-                      style: GoogleFonts.poppins(
-                        color: Color(0xff1F41BB),
-                        fontSize: 30,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    )
-                  ],
-                ),
-                SizedBox(
-                  height: height * 0.05,
-                ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Container(
-                      height: height * 0.21,
-                      width: width * 0.8,
-                      child: GridView.builder(
-                        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                            crossAxisSpacing: 20,
-                            mainAxisSpacing: 20,
-                            crossAxisCount: 3),
-                        itemCount: AppConst.avatar.length,
-                        itemBuilder: (context, index) {
-                          bool isSelected = index == selectedIndex;
-                          return InkWell(
-                            highlightColor: Colors.transparent,
-                            splashColor: Colors.transparent,
-                            onTap: () {
-                              setState(() {
-                                selectedIndex = index;
-                                url = AppConst.avatar[index]["ImageURL"];
-                              });
-                            },
-                            child: Container(
-                              padding: EdgeInsets.all(2),
-                              decoration: BoxDecoration(
-                                border: Border.all(
-                                    color: isSelected
-                                        ? Color(0xff1F41BB)
-                                        : Colors.transparent,
-                                    width: 3),
-                                borderRadius: BorderRadius.circular(40),
-                              ),
-                              child: Image.network(
-                                "${AppConst.avatar[index]["ImageURL"]}",
-                                fit: BoxFit.cover,
-                              ),
-                            ),
-                          );
-                        },
-                      ),
+        body: SingleChildScrollView(
+          child: Column(
+            children: [
+              SizedBox(height: height * 0.05),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    "Create Account",
+                    style: GoogleFonts.poppins(
+                      color: Color(0xff1F41BB),
+                      fontSize: 30,
+                      fontWeight: FontWeight.bold,
                     ),
-                  ],
-                ),
-                SizedBox(
-                  height: height * 0.03,
-                ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    CustomFieldsForAuth(
-                      icon: Icon(Icons.person),
-                      label_txt: "Enter Your First Name",
-                      controller: firstNameController,
-                      isHidden: false,
-                      height: 0.06,
-                      width: 0.8,
-                      shadowColor: Colors.grey,
-                    ),
-                  ],
-                ),
-                SizedBox(
-                  height: height * 0.03,
-                ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    CustomFieldsForAuth(
-                      icon: Icon(Icons.person),
-                      label_txt: "Enter Your Last Name",
-                      controller: lastNameController,
-                      isHidden: false,
-                      height: 0.06,
-                      width: 0.8,
-                      shadowColor: Colors.grey,
-                    ),
-                  ],
-                ),
-                SizedBox(
-                  height: height * 0.03,
-                ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    CustomFieldsForAuth(
-                      icon: Icon(Icons.email),
-                      label_txt: "Enter Your Email",
-                      controller: emailController,
-                      isHidden: false,
-                      height: 0.06,
-                      width: 0.8,
-                      shadowColor: Colors.grey,
-                    ),
-                  ],
-                ),
-                SizedBox(
-                  height: height * 0.03,
-                ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.end,
-                      children: [
-                        CustomFieldsForAuth(
-                          icon: Icon(Icons.lock),
-                          label_txt: "Enter Your Password",
-                          controller: passwordController,
-                          isHidden: true,
-                          height: 0.06,
-                          width: 0.8,
-                          shadowColor: Colors.grey,
-                        ),
-                        SizedBox(
-                          height: height * 0.008,
-                        ),
-                        Text(
-                          "Password must be 8 Characters!",
-                          style: GoogleFonts.poppins(
-                            color: Colors.black,
-                            fontSize: 10,
-                            fontWeight: FontWeight.w500,
+                  ),
+                ],
+              ),
+              SizedBox(height: height * 0.05),
+              Container(
+                height: height * 0.21,
+                width: width * 0.8,
+                child: GridView.builder(
+                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisSpacing: 20,
+                    mainAxisSpacing: 20,
+                    crossAxisCount: 3,
+                  ),
+                  itemCount: AppConst.avatar.length,
+                  itemBuilder: (context, index) {
+                    bool isSelected = index == selectedIndex;
+                    return InkWell(
+                      onTap: () {
+                        setState(() {
+                          selectedIndex = index;
+                          url = AppConst.avatar[index]["ImageURL"];
+                        });
+                      },
+                      highlightColor: Colors.transparent,
+                      splashColor: Colors.transparent,
+                      child: Container(
+                        padding: EdgeInsets.all(2),
+                        decoration: BoxDecoration(
+                          border: Border.all(
+                            color: isSelected
+                                ? Color(0xff1F41BB)
+                                : Colors.transparent,
+                            width: 3,
                           ),
-                        )
-                      ],
-                    ),
-                  ],
-                ),
-                SizedBox(
-                  height: height * 0.03,
-                ),
-                ButtonForAuth(
-                  height: 0.06,
-                  width: 0.8,
-                  border_color: Color(0xff1F41BB),
-                  background_color: Color(0xff1F41BB),
-                  text: "Sign Up".toUpperCase(),
-                  text_color: Colors.white,
-                  shadowColor: Color(0xff1F41BB),
-                  my_fun: () => Sign_Up(context),
-                ),
-                SizedBox(
-                  height: height * 0.03,
-                ),
-                ButtonForAuth(
-                  height: 0.06,
-                  width: 0.8,
-                  border_color: Color(0xff1F41BB),
-                  background_color: Colors.white,
-                  text: "Sign in".toUpperCase(),
-                  shadowColor: Colors.grey,
-                  text_color: Colors.black,
-                  my_fun: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => Login(),
+                          borderRadius: BorderRadius.circular(40),
+                        ),
+                        child: Image.network(
+                          "${AppConst.avatar[index]["ImageURL"]}",
+                          fit: BoxFit.cover,
+                        ),
                       ),
                     );
                   },
                 ),
-              ],
-            ),
+              ),
+              SizedBox(height: height * 0.03),
+              CustomFieldsForAuth(
+                icon: Icon(Icons.person),
+                label_txt: "Enter Your First Name",
+                controller: firstNameController,
+                isHidden: false,
+                height: 0.06,
+                width: 0.8,
+                shadowColor: Colors.grey,
+              ),
+              SizedBox(height: height * 0.03),
+              CustomFieldsForAuth(
+                icon: Icon(Icons.person),
+                label_txt: "Enter Your Last Name",
+                controller: lastNameController,
+                isHidden: false,
+                height: 0.06,
+                width: 0.8,
+                shadowColor: Colors.grey,
+              ),
+              SizedBox(height: height * 0.03),
+              CustomFieldsForAuth(
+                icon: Icon(Icons.email),
+                label_txt: "Enter Your Email",
+                controller: emailController,
+                isHidden: false,
+                height: 0.06,
+                width: 0.8,
+                shadowColor: Colors.grey,
+              ),
+              SizedBox(height: height * 0.03),
+              CustomFieldsForAuth(
+                icon: Icon(Icons.lock),
+                label_txt: "Enter Your Password",
+                controller: passwordController,
+                isHidden: true,
+                height: 0.06,
+                width: 0.8,
+                shadowColor: Colors.grey,
+              ),
+              SizedBox(height: height * 0.008),
+              Text(
+                "Password must be at least 8 characters!",
+                style: GoogleFonts.poppins(
+                  color: Colors.black,
+                  fontSize: 10,
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+              SizedBox(height: height * 0.03),
+              ButtonForAuth(
+                height: 0.06,
+                width: 0.8,
+                border_color: Color(0xff1F41BB),
+                background_color: Color(0xff1F41BB),
+                text: "Sign Up".toUpperCase(),
+                text_color: Colors.white,
+                shadowColor: Color(0xff1F41BB),
+                my_fun: () => signUp(),
+              ),
+              SizedBox(height: height * 0.03),
+              ButtonForAuth(
+                height: 0.06,
+                width: 0.8,
+                border_color: Color(0xff1F41BB),
+                background_color: Colors.white,
+                text: "Sign in".toUpperCase(),
+                shadowColor: Colors.grey,
+                text_color: Colors.black,
+                my_fun: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => Login()),
+                  );
+                },
+              ),
+            ],
           ),
         ),
       ),
