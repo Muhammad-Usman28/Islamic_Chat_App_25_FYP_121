@@ -106,7 +106,7 @@ class _MainScreenState extends State<MainScreen> {
           backgroundColor: Color(0xFFFFFFFF),
           centerTitle: true,
           title: Text(
-            "Islamic Chat App",
+            "Deen AI Chat App",
             style: GoogleFonts.roboto(
               fontSize: 22,
               color: Colors.black,
