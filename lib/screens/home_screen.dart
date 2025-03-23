@@ -132,11 +132,11 @@ class _HomeScreenState extends State<HomeScreen> {
                                               gradient: LinearGradient(
                                                 colors: [
                                                   Color(0xffBBD2C5)
-                                                      .withOpacity(0.8),
+                                                      .withValues(alpha: 0.8),
                                                   Color(0xff536976)
-                                                      .withOpacity(0.8),
+                                                      .withValues(alpha: 0.8),
                                                   Color(0xff292E49)
-                                                      .withOpacity(0.8),
+                                                      .withValues(alpha: 0.8),
                                                 ],
                                                 begin: Alignment.topCenter,
                                                 end: Alignment.bottomCenter,
@@ -173,7 +173,8 @@ class _HomeScreenState extends State<HomeScreen> {
                                                 ),
                                                 Divider(
                                                     color: Colors.white
-                                                        .withOpacity(0.5)),
+                                                        .withValues(
+                                                            alpha: 0.5)),
                                                 // Action Buttons
                                                 Padding(
                                                   padding: const EdgeInsets

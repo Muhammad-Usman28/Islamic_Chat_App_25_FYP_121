@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:fyp_user_panel/screens/dua_screen.dart';
+import 'package:fyp_user_panel/screens/tasbeeh_screen.dart';
 import 'package:fyp_user_panel/widgets/personal_profile_tile.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -139,16 +140,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     height: height * 0.04,
                   ),
                   PersonalProfileTile(
-                    targetScreen: null,
-                    onTap: () {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(
-                          backgroundColor: Colors.blue,
-                          content: Text(
-                              "This feature is under Development. Stay tuned!"),
-                        ),
-                      );
-                    },
+                    targetScreen: TasbeehScreen(),
+                    onTap: null,
                     icon: Icon(
                       Icons.all_inclusive,
                       color: Color(0xffFFC107),

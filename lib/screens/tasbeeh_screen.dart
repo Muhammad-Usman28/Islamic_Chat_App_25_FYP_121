@@ -119,9 +119,9 @@ class _TasbeehScreenState extends State<TasbeehScreen> {
                               decoration: BoxDecoration(
                                 gradient: LinearGradient(
                                   colors: [
-                                    Color(0xffBBD2C5).withOpacity(0.8),
-                                    Color(0xff536976).withOpacity(0.8),
-                                    Color(0xff292E49).withOpacity(0.8),
+                                    Color(0xffBBD2C5).withValues(alpha: 0.8),
+                                    Color(0xff536976).withValues(alpha: 0.8),
+                                    Color(0xff292E49).withValues(alpha: 0.8),
                                   ],
                                   begin: Alignment.topCenter,
                                   end: Alignment.bottomCenter,
@@ -129,7 +129,7 @@ class _TasbeehScreenState extends State<TasbeehScreen> {
                                 borderRadius: BorderRadius.circular(20),
                                 boxShadow: [
                                   BoxShadow(
-                                    color: Colors.black.withOpacity(0.2),
+                                    color: Colors.black.withValues(alpha: 0.2),
                                     blurRadius: 10,
                                     spreadRadius: 2,
                                     offset: Offset(0,
@@ -152,8 +152,8 @@ class _TasbeehScreenState extends State<TasbeehScreen> {
                                           fontWeight: FontWeight.w800,
                                           shadows: [
                                             Shadow(
-                                              color:
-                                                  Colors.black.withOpacity(0.5),
+                                              color: Colors.black
+                                                  .withValues(alpha: 0.5),
                                               offset: Offset(1, 1),
                                               blurRadius: 2,
                                             ),
@@ -173,7 +173,8 @@ class _TasbeehScreenState extends State<TasbeehScreen> {
                                       Container(
                                         decoration: BoxDecoration(
                                           shape: BoxShape.circle,
-                                          color: Colors.white.withOpacity(0.2),
+                                          color: Colors.white
+                                              .withValues(alpha: 0.2),
                                         ),
                                         child: IconButton(
                                           icon: Icon(Icons.remove),
@@ -205,7 +206,7 @@ class _TasbeehScreenState extends State<TasbeehScreen> {
                                               shadows: [
                                                 Shadow(
                                                   color: Colors.black
-                                                      .withOpacity(0.4),
+                                                      .withValues(alpha: 0.4),
                                                   offset: Offset(1, 1),
                                                   blurRadius: 2,
                                                 ),
@@ -220,7 +221,8 @@ class _TasbeehScreenState extends State<TasbeehScreen> {
                                       Container(
                                         decoration: BoxDecoration(
                                           shape: BoxShape.circle,
-                                          color: Colors.white.withOpacity(0.2),
+                                          color: Colors.white
+                                              .withValues(alpha: 0.2),
                                         ),
                                         child: IconButton(
                                           icon: Icon(Icons.add),
@@ -253,8 +255,8 @@ class _TasbeehScreenState extends State<TasbeehScreen> {
                                       width: width * 0.3,
                                       decoration: BoxDecoration(
                                         borderRadius: BorderRadius.circular(15),
-                                        color:
-                                            Color(0xffBBD2C5).withOpacity(0.8),
+                                        color: Color(0xffBBD2C5)
+                                            .withValues(alpha: 0.8),
                                       ),
                                       child: Center(
                                         child: Text(

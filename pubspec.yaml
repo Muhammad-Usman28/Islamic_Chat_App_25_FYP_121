@@ -47,6 +47,10 @@ dependencies:
   supabase_flutter: ^2.8.3
   image_picker: ^1.1.2
   google_generative_ai: ^0.4.6
+  fl_chart: ^0.70.2
+  syncfusion_flutter_charts: ^28.1.43
+  lottie: ^3.3.1
+  awesome_dialog: ^3.2.1
 
 dev_dependencies:
   flutter_test:

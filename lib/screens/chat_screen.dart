@@ -448,7 +448,7 @@ class _ChatScreenState extends State<ChatScreen> {
                   onPressed: () async {
                     if (searchQuery.isNotEmpty) {
                       final url = Uri.parse(
-                          'http://192.168.18.61:8000/get_similar_hadees');
+                          'http://10.13.43.103:8000/get_similar_hadees');
                       final data = {'query': searchQuery};
 
                       try {
